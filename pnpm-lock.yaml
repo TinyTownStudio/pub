@@ -28,7 +28,7 @@ importers:
         version: 0.24.0
       htmlnano:
         specifier: ^2.1.1
-        version: 2.1.1(cssnano@7.0.6(postcss@8.4.49))(postcss@8.4.49)(svgo@3.3.2)(terser@5.36.0)
+        version: 2.1.1(cssnano@7.0.6(postcss@8.4.49))(postcss@8.4.49)(srcset@5.0.1)(svgo@3.3.2)(terser@5.36.0)
       kleur:
         specifier: ^4.1.5
         version: 4.1.5
@@ -53,6 +53,9 @@ importers:
       posthtml:
         specifier: ^0.16.6
         version: 0.16.6
+      posthtml-base-url:
+        specifier: ^3.1.5
+        version: 3.1.5(posthtml@0.16.6)
       sade:
         specifier: ^1.8.1
         version: 1.8.1
@@ -649,6 +652,9 @@ packages:
     resolution: {integrity: sha512-h5k/5U50IJJFpzfL6nO9jaaumfjO/f2NjK/oYB2Djzm4p9L+3T9qWpZqZ2hAbLPuuYq9wrU08WQyBTL5GbPk5Q==}
     engines: {node: '>=6'}
 
+  defu@6.1.4:
+    resolution: {integrity: sha512-mEQCMmwJu317oSz8CwdIOdwf3xMif1ttiM8LTufzc3g6kR+9Pe236twL8j3IYT1F7GfRgGcW6MWxzZjLIkuHIg==}
+
   diff@3.5.0:
     resolution: {integrity: sha512-A46qtFgd+g7pDZinpnwiRJtxbC1hpgf0uzP3iG89scHk0AUC7A1TGxf5OiiOUv/JMZR8GOt8hL900hV0bOy5xA==}
     engines: {node: '>=0.3.1'}
@@ -880,6 +886,10 @@ packages:
   is-unicode-supported@0.1.0:
     resolution: {integrity: sha512-knxG2q4UC3u8stRGyAVJCOdxFmv5DZiRcdlIaAQXAbSfJya+OhopNotLQrstBhququ4ZpuKbDc/8S6mgXgPFPw==}
     engines: {node: '>=10'}
+
+  is-url-superb@6.1.0:
+    resolution: {integrity: sha512-LXdhGlYqUPdvEyIhWPEEwYYK3yrUiPcBjmFGlZNv1u5GtIL5qQRf7ddDyPNAvsMFqdzS923FROpTQU97tLe3JQ==}
+    engines: {node: '>=12'}
 
   jest-diff@21.2.1:
     resolution: {integrity: sha512-E5fu6r7PvvPr5qAWE1RaUwIh/k6Zx/3OOkZ4rk5dBJkEWRrUuSgbMt2EO8IUTPTd6DOqU3LW6uTIwX5FRvXoFA==}
@@ -1228,6 +1238,12 @@ packages:
     peerDependencies:
       postcss: ^8.4.31
 
+  postcss-safe-parser@7.0.1:
+    resolution: {integrity: sha512-0AioNCJZ2DPYz5ABT6bddIqlhgwhpHZ/l65YAYo0BCIn0xiDpsnTHz0gnoTGk0OXZW0JRs+cDwL8u/teRdz+8A==}
+    engines: {node: '>=18.0'}
+    peerDependencies:
+      postcss: ^8.4.31
+
   postcss-scss@4.0.9:
     resolution: {integrity: sha512-AjKOeiwAitL/MXxQW2DliT28EKukvvbEWx3LBmJIRN8KfBGZbRTxNYW0kSqi1COiTZ57nZ9NW06S6ux//N1c9A==}
     engines: {node: '>=12.0'}
@@ -1256,6 +1272,12 @@ packages:
   postcss@8.4.49:
     resolution: {integrity: sha512-OCVPnIObs4N29kxTjzLfUryOkvZEq+pf8jTF0lg8E7uETuWHA+v7j3c/xJmiqpX450191LlmZfUKkXxkTry7nA==}
     engines: {node: ^10 || ^12 || >=14}
+
+  posthtml-base-url@3.1.5:
+    resolution: {integrity: sha512-BHEWszTyqGTP55J++1aGrYMVsbLFzpyfIe/LPhDAiBsCq2OqSvazZxEKke26uHnZKAMk1PRoAQ9s8DThA9IPjQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      posthtml: ^0.16.6
 
   posthtml-parser@0.11.0:
     resolution: {integrity: sha512-QecJtfLekJbWVo/dMAA+OSwY79wpRmbqS5TeXvXSX+f0c6pW4/SE6inzZ2qkU7oAMCPqIDkZDvd/bQsSFUnKyw==}
@@ -1358,6 +1380,10 @@ packages:
   source-map@0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
+
+  srcset@5.0.1:
+    resolution: {integrity: sha512-/P1UYbGfJVlxZag7aABNRrulEXAwCSDo7fklafOQrantuPTDmYgijJMks2zusPCVzgW9+4P69mq7w6pYuZpgxw==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
@@ -2037,6 +2063,8 @@ snapshots:
 
   deep-eql@5.0.2: {}
 
+  defu@6.1.4: {}
+
   diff@3.5.0: {}
 
   diff@5.2.0: {}
@@ -2182,7 +2210,7 @@ snapshots:
 
   he@1.2.0: {}
 
-  htmlnano@2.1.1(cssnano@7.0.6(postcss@8.4.49))(postcss@8.4.49)(svgo@3.3.2)(terser@5.36.0):
+  htmlnano@2.1.1(cssnano@7.0.6(postcss@8.4.49))(postcss@8.4.49)(srcset@5.0.1)(svgo@3.3.2)(terser@5.36.0):
     dependencies:
       cosmiconfig: 9.0.0
       posthtml: 0.16.6
@@ -2190,6 +2218,7 @@ snapshots:
     optionalDependencies:
       cssnano: 7.0.6(postcss@8.4.49)
       postcss: 8.4.49
+      srcset: 5.0.1
       svgo: 3.3.2
       terser: 5.36.0
     transitivePeerDependencies:
@@ -2243,6 +2272,8 @@ snapshots:
   is-plain-obj@2.1.0: {}
 
   is-unicode-supported@0.1.0: {}
+
+  is-url-superb@6.1.0: {}
 
   jest-diff@21.2.1:
     dependencies:
@@ -2563,6 +2594,10 @@ snapshots:
       postcss: 8.4.49
       postcss-value-parser: 4.2.0
 
+  postcss-safe-parser@7.0.1(postcss@8.4.49):
+    dependencies:
+      postcss: 8.4.49
+
   postcss-scss@4.0.9(postcss@8.4.49):
     dependencies:
       postcss: 8.4.49
@@ -2590,6 +2625,16 @@ snapshots:
       nanoid: 3.3.8
       picocolors: 1.1.1
       source-map-js: 1.2.1
+
+  posthtml-base-url@3.1.5(posthtml@0.16.6):
+    dependencies:
+      defu: 6.1.4
+      is-url-superb: 6.1.0
+      pathe: 1.1.2
+      postcss: 8.4.49
+      postcss-safe-parser: 7.0.1(postcss@8.4.49)
+      posthtml: 0.16.6
+      srcset: 5.0.1
 
   posthtml-parser@0.11.0:
     dependencies:
@@ -2717,6 +2762,8 @@ snapshots:
       source-map: 0.6.1
 
   source-map@0.6.1: {}
+
+  srcset@5.0.1: {}
 
   stackback@0.0.2: {}
 

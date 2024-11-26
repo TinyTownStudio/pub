@@ -21,10 +21,18 @@ const clearLastLine = () => {
 const program = sade('pub <src> [dest]', true)
     .version(getPkgJSON().version)
     .option('port', 'Port to run the dev server on', '3000')
+    .option(
+        'base-url',
+        'Base URL to use for assets (eg: barelyhuman.github.io/)',
+        '/',
+    )
     .action(async (src, dest, options) => {
         if (src) {
             console.log(k.gray('Processing...'))
-            let output = await compile(src, dest, {})
+            const compilerOptions = {
+                baseUrl: options['base-url'],
+            }
+            let output = await compile(src, dest, compilerOptions)
             clearLastLine()
             if (!dest) {
                 const watchMap = new Set()
@@ -36,7 +44,7 @@ const program = sade('pub <src> [dest]', true)
                         }
                         watchMap.add(f)
                     }
-                    output = await compile(src, undefined, {})
+                    output = await compile(src, dest, compilerOptions)
                 })
 
                 const server = createServer((req, res) => {
@@ -106,7 +114,7 @@ const program = sade('pub <src> [dest]', true)
                 )
                 box(
                     `@tinytown/pub (${k.gray(getPkgJSON().version)})
-                    
+
 ${' '.repeat(4) + filesWritten.map((d) => `${k.cyan(d.size)} ${k.gray(d.dist)}`).join('\n' + ' '.repeat(4))}
 
 ${k.green('✓')} ${k.gray('Built to')} ${k.green(resolve(dest).replace(process.cwd(), '.'))}`,
