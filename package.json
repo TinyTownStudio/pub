@@ -35,6 +35,7 @@
         "cssnano": "^7.0.6",
         "esbuild": "^0.24.0",
         "htmlnano": "^2.1.1",
+        "kleur": "^4.1.5",
         "marked": "^15.0.2",
         "mrmime": "^2.0.0",
         "postcss": "^8.4.49",

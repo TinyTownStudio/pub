@@ -1,21 +1,31 @@
 #!/usr/bin/env node
 
 import boxen from 'boxen'
+import chokidar from 'chokidar'
+import k from 'kleur'
 import { lookup } from 'mrmime'
 import fs from 'node:fs'
 import { createServer } from 'node:http'
 import { dirname, resolve } from 'node:path'
 import sade from 'sade'
 import { compile } from '../lib/publish.mjs'
-import chokidar from 'chokidar'
+import { getPkgJSON, size } from '../lib/utils.mjs'
 
 const box = (...args) => console.log(boxen(...args))
 
+const clearLastLine = () => {
+    process.stdout.moveCursor(0, -1) // up one line
+    process.stdout.clearLine(1) // from cursor to end
+}
+
 const program = sade('pub <src> [dest]', true)
-    .option('port', 'Port to run the dev server on')
+    .version(getPkgJSON().version)
+    .option('port', 'Port to run the dev server on', '3000')
     .action(async (src, dest, options) => {
         if (src) {
+            console.log(k.gray('Processing...'))
             let output = await compile(src, dest, {})
+            clearLastLine()
             if (!dest) {
                 const watchMap = new Set()
                 const watcher = chokidar.watch(src)
@@ -66,9 +76,9 @@ const program = sade('pub <src> [dest]', true)
 
                 server.listen(options.port, () => {
                     box(
-                        `Pub Dev Server                
+                        `@tinytown/pub (${k.gray(getPkgJSON().version)})
     
-    > listening on ${options.port}`,
+> listening on ${k.underline(['http://', options.host ?? 'localhost:', options.port].filter(Boolean).join(''))}`,
                         {
                             borderStyle: 'single',
                             borderColor: 'cyan',
@@ -83,9 +93,10 @@ const program = sade('pub <src> [dest]', true)
                         await fs.promises.mkdir(dirname(def.dist), {
                             recursive: true,
                         })
-                        filesWritten.push(
-                            resolve(def.dist).replace(process.cwd(), ''),
-                        )
+                        filesWritten.push({
+                            dist: resolve(def.dist).replace(process.cwd(), '.'),
+                            size: size(def.content.length),
+                        })
                         await fs.promises.writeFile(
                             def.dist,
                             def.content,
@@ -94,11 +105,11 @@ const program = sade('pub <src> [dest]', true)
                     }),
                 )
                 box(
-                    `
-Built!
+                    `@tinytown/pub (${k.gray(getPkgJSON().version)})
+                    
+${' '.repeat(4) + filesWritten.map((d) => `${k.cyan(d.size)} ${k.gray(d.dist)}`).join('\n' + ' '.repeat(4))}
 
-${' '.repeat(4) + filesWritten.map((d) => d).join('\n' + ' '.repeat(4))}
-                `,
+${k.green('✓')} ${k.gray('Built to')} ${k.green(resolve(dest).replace(process.cwd(), '.'))}`,
                     {
                         borderStyle: 'none',
                     },
