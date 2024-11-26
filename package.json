@@ -3,10 +3,17 @@
     "version": "0.0.0",
     "description": "A tiny pre-processor for tiny websites",
     "type": "module",
+    "contributors": [
+        "reaper <ahoy@barelyhuman.dev>"
+    ],
     "exports": "./lib/publish.mjs",
     "bin": {
         "pub": "./bin/pub.mjs"
     },
+    "files": [
+        "lib",
+        "bin"
+    ],
     "scripts": {
         "publint": "publint",
         "test": "vitest"
