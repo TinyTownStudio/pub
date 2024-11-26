@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import boxen from 'boxen'
+
 import chokidar from 'chokidar'
 import k from 'kleur'
 import { lookup } from 'mrmime'
@@ -9,9 +10,11 @@ import { createServer } from 'node:http'
 import { dirname, resolve } from 'node:path'
 import sade from 'sade'
 import { compile } from '../lib/publish.mjs'
-import { getPkgJSON, size } from '../lib/utils.mjs'
+import { getPkgJSON, size, getNetwork } from '../lib/utils.mjs'
 
 const box = (...args) => console.log(boxen(...args))
+
+const pad = (msg) => msg.padEnd(4, ' ')
 
 const clearLastLine = () => {
     process.stdout.moveCursor(0, -1) // up one line
@@ -82,11 +85,16 @@ const program = sade('pub <src> [dest]', true)
                     process.exit()
                 })
 
-                server.listen(options.port, () => {
+                server.listen(options.port, async () => {
                     box(
                         `@tinytown/pub (${k.gray(getPkgJSON().version)})
     
-> listening on ${k.underline(['http://', options.host ?? 'localhost:', options.port].filter(Boolean).join(''))}`,
+${k.green('Serving')}
+
+
+  Local:${pad('')}${k.underline(['http://', options.host ?? 'localhost:', options.port].filter(Boolean).join(''))}
+Network:${pad('')}${k.underline(['http://', getNetwork() + ':', options.port].filter(Boolean).join(''))}
+    `,
                         {
                             borderStyle: 'single',
                             borderColor: 'cyan',
