@@ -7,21 +7,30 @@ import { createServer } from 'node:http'
 import { dirname, resolve } from 'node:path'
 import sade from 'sade'
 import { compile } from '../lib/publish.mjs'
+import chokidar from 'chokidar'
 
 const box = (...args) => console.log(boxen(...args))
 
 const program = sade('pub <src> [dest]', true)
+    .option('port', 'Port to run the dev server on')
     .action(async (src, dest, options) => {
         if (src) {
-            const output = await compile(src, dest, {})
+            let output = await compile(src, dest, {})
             if (!dest) {
-                createServer((req, res) => {
+                const watchMap = new Set()
+                const watcher = chokidar.watch(src)
+                watcher.on('all', async (c, f) => {
+                    if (c == 'add') {
+                        if (watchMap.has(f)) {
+                            return
+                        }
+                        watchMap.add(f)
+                    }
+                    output = await compile(src, undefined, {})
+                })
+
+                const server = createServer((req, res) => {
                     const path = req.url
-                    console.log({
-                        k: Object.keys(output),
-                        path,
-                        op: output[path],
-                    })
                     const end = req.url.split('/').at(-1)
                     let mime = 'text/plain'
                     if (end) {
@@ -47,11 +56,19 @@ const program = sade('pub <src> [dest]', true)
                             return res.end('404')
                         }
                     }
-                }).listen(3000, () => {
+                })
+
+                process.on('SIGINT', () => {
+                    watcher.close()
+                    server.close()
+                    process.exit()
+                })
+
+                server.listen(options.port, () => {
                     box(
                         `Pub Dev Server                
     
-    > listening on 3000`,
+    > listening on ${options.port}`,
                         {
                             borderStyle: 'single',
                             borderColor: 'cyan',
