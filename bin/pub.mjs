@@ -62,7 +62,11 @@ const program = sade('pub <src> [dest]', true)
             clearLastLine()
             if (!dest) {
                 const watchMap = new Set()
-                const watcher = chokidar.watch(src)
+                const watcher = chokidar.watch(src, {
+                    ignored: (f) => {
+                        return f.startsWith('node_modules')
+                    },
+                })
                 watcher.add('_pub.json')
                 watcher.on('all', async (c, f) => {
                     if (c == 'add') {
@@ -130,6 +134,7 @@ Network:${pad('')}${k.underline(['http://', getNetwork() + ':', options.port].fi
                 const filesWritten = []
                 await Promise.all(
                     Object.values(output).map(async (def) => {
+                        if (!def.dist) return
                         await fs.promises.mkdir(dirname(def.dist), {
                             recursive: true,
                         })
