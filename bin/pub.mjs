@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import boxen from 'boxen'
-
 import chokidar from 'chokidar'
 import k from 'kleur'
 import { lookup } from 'mrmime'
@@ -11,6 +10,7 @@ import { dirname, resolve } from 'node:path'
 import sade from 'sade'
 import { compile } from '../lib/publish.mjs'
 import { getPkgJSON, size, getNetwork } from '../lib/utils.mjs'
+import { access, readFile } from 'node:fs/promises'
 
 const box = (...args) => console.log(boxen(...args))
 
@@ -21,6 +21,26 @@ const clearLastLine = () => {
     process.stdout.clearLine(1) // from cursor to end
 }
 
+const readConfig = async (path) => {
+    const exists = await access(path)
+        .then((_) => {
+            return true
+        })
+        .catch((err) => {
+            return false
+        })
+
+    if (exists) {
+        const d = await readFile(path, 'utf8')
+        try {
+            return JSON.parse(d)
+        } catch (err) {
+            throw new Error(`Error parsing the config file properly, ${path}`)
+        }
+    }
+    return {}
+}
+
 const program = sade('pub <src> [dest]', true)
     .version(getPkgJSON().version)
     .option('port', 'Port to run the dev server on', '3000')
@@ -29,17 +49,21 @@ const program = sade('pub <src> [dest]', true)
         'Base URL to use for assets (eg: barelyhuman.github.io/)',
         '/',
     )
+    .option('config', 'config file for pub', './_pub.json')
     .action(async (src, dest, options) => {
+        const config = await readConfig(options.config)
         if (src) {
             console.log(k.gray('Processing...'))
             const compilerOptions = {
                 baseUrl: options['base-url'],
+                jsxImportSource: config.jsxImportSource,
             }
             let output = await compile(src, dest, compilerOptions)
             clearLastLine()
             if (!dest) {
                 const watchMap = new Set()
                 const watcher = chokidar.watch(src)
+                watcher.add('_pub.json')
                 watcher.on('all', async (c, f) => {
                     if (c == 'add') {
                         if (watchMap.has(f)) {
