@@ -124,6 +124,24 @@ importers:
         specifier: ^3.4.15
         version: 3.4.15
 
+  playground:
+    devDependencies:
+      '@tailwindcss/typography':
+        specifier: ^0.5.15
+        version: 0.5.15(tailwindcss@3.4.15)
+      '@tinytown/pub':
+        specifier: workspace:*
+        version: link:..
+      autoprefixer:
+        specifier: ^10.4.20
+        version: 10.4.20(postcss@8.4.49)
+      tailwind:
+        specifier: ^4.0.0
+        version: 4.0.0
+      tailwindcss:
+        specifier: ^3.4.15
+        version: 3.4.15
+
 packages:
 
   '@alloc/quick-lru@5.2.0':

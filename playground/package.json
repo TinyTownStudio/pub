@@ -1,10 +1,10 @@
 {
-    "name": "docs",
+    "name": "playground",
     "version": "0.0.1",
     "private": true,
     "scripts": {
-        "dev": "pub .",
-        "build": "pub . dist"
+        "dev": "pub ./src",
+        "build": "pub ./src dist"
     },
     "keywords": [],
     "author": "",
