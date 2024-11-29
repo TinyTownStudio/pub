@@ -1,0 +1,30 @@
+<html lang='en'>
+    <head>
+        <meta charset='UTF-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+        <title>@tinytown/pub | A tiny pre-processor for tiny websites</title>
+        <link rel='stylesheet' href='styles.css' />
+    </head>
+    <body class='p-2 mx-auto max-w-3xl'>
+        {{#showBack}}
+            <header
+                class='flex items-center mb-8 h-10 border-b border-b-zinc-100 shadow-b'
+            >
+                <nav>
+                    <a href='/'>&larr; Home</a>
+                </nav>
+            </header>
+        {{/showBack}}
+        <article class='prose prose-zinc'>
+            {{{content}}}
+        </article>
+        <footer class='mt-10'>
+            Built with ❤️ at
+            <a
+                href='https://tinytown.studio/'
+                class='underline underline-offset-4'
+            >tinytown.studio</a>
+        </footer>
+        <script src='highlight.mjs' type='module'></script>
+    </body>
+</html>

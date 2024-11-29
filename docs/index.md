@@ -2,6 +2,5 @@
 
 A tiny pre-processor for tiny websites
 
-[Getting Started](./getting-started)
-
-Built with ❤️ at [tinytown.studio](https://tinytown.studio/)
+- [Getting Started](./getting-started)
+- [Guide](./guide)
