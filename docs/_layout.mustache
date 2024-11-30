@@ -16,6 +16,9 @@
             </header>
         {{/showBack}}
         <article class='prose prose-zinc'>
+            {{#title}}
+                <h1 class=''>{{title}}</h1>
+            {{/title}}
             {{{content}}}
         </article>
         <footer class='mt-10'>
@@ -25,6 +28,6 @@
                 class='underline underline-offset-4'
             >tinytown.studio</a>
         </footer>
-        <script src='highlight.mjs' type='module'></script>
+        <script src='highlight.js' type='module'></script>
     </body>
 </html>

@@ -1,10 +1,7 @@
 ---
+title: Quickstart
 showBack: true
 ---
-
-# Getting Started
-
-## Basics
 
 ### Install
 
@@ -16,7 +13,7 @@ npm install -D @tinytown/pub
 
 ```sh
 # dev server
-npx -p @tinytown/pub pub ./src
+npx -p @tinytown/pub pu b ./src
 
 # build assets
 npx -p @tinytown/pub pub ./dist
