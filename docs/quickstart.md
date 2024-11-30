@@ -34,5 +34,3 @@ npx -p @tinytown/pub pub ./dist
 - CSS
     - Full PostCSS Support
         - Comes with postcss-import support (bundles css from `node_module`)
-
-[Guide &rarr;](guide)
