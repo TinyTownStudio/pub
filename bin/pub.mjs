@@ -2,6 +2,7 @@
 
 import boxen from 'boxen'
 import chokidar from 'chokidar'
+import readline from 'readline'
 import k from 'kleur'
 import { lookup } from 'mrmime'
 import fs from 'node:fs'
@@ -17,8 +18,8 @@ const box = (...args) => console.log(boxen(...args))
 const pad = (msg) => msg.padEnd(4, ' ')
 
 const clearLastLine = () => {
-    process.stdout.moveCursor(0, -1) // up one line
-    process.stdout.clearLine(1) // from cursor to end
+    readline.cursorTo(process.stdout, 0, -1)
+    readline.clearScreenDown(process.stdout)
 }
 
 const readConfig = async (path) => {
