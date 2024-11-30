@@ -11,9 +11,6 @@ importers:
       boxen:
         specifier: ^8.0.1
         version: 8.0.1
-      boxt:
-        specifier: ^1.1.2
-        version: 1.1.2
       chalk:
         specifier: ^5.3.0
         version: 5.3.0
@@ -653,9 +650,6 @@ packages:
   boxen@8.0.1:
     resolution: {integrity: sha512-F3PH5k5juxom4xktynS7MoFY+NUWH5LC4CnH11YB8NPew+HLpmBLCybSAEyb2F+4pRXhuhWqFesoQd6DAyc2hw==}
     engines: {node: '>=18'}
-
-  boxt@1.1.2:
-    resolution: {integrity: sha512-YvBJK+TsjrUNAjJliqEKiGdbKlPhr9I8/FDtLsZvhmVWp+NmHBWKMkpmDNkqYpptEA2XXjYVcs30YGj0/bKWQg==}
 
   brace-expansion@2.0.1:
     resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
@@ -3269,10 +3263,6 @@ snapshots:
       type-fest: 4.28.1
       widest-line: 5.0.0
       wrap-ansi: 9.0.0
-
-  boxt@1.1.2:
-    dependencies:
-      strip-ansi: 6.0.1
 
   brace-expansion@2.0.1:
     dependencies:
