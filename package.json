@@ -30,6 +30,7 @@
         "trailingComma": "all"
     },
     "dependencies": {
+        "@dumbjs/quick-hash": "^0.0.4",
         "boxen": "^8.0.1",
         "chalk": "^5.3.0",
         "chokidar": "^4.0.1",
@@ -62,9 +63,18 @@
         "prettier": "^3.4.1",
         "publint": "^0.2.12",
         "should": "^13.2.3",
+        "svelte": "^5.3.0",
         "vitest": "^2.1.6"
     },
     "publishConfig": {
         "access": "public"
+    },
+    "peerDependencies": {
+        "svelte": "^5.3.0"
+    },
+    "peerDependenciesMeta": {
+        "svelte": {
+            "optional": true
+        }
     }
 }
