@@ -133,7 +133,7 @@ Network:${pad('')}${k.underline(['http://', getNetwork() + ':', options.port].fi
                 })
             } else {
                 const filesWritten = []
-                await Promise.all(
+                await Promise.allSettled(
                     Object.values(output).map(async (def) => {
                         if (!def.dist) return
                         await fs.promises.mkdir(dirname(def.dist), {
@@ -160,6 +160,7 @@ ${k.green('✓')} ${k.gray('Built to')} ${k.green(resolve(dest).replace(process.
                         borderStyle: 'none',
                     },
                 )
+                process.exit()
             }
         }
     })
