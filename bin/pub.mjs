@@ -2,19 +2,22 @@
 
 import boxen from 'boxen'
 import chokidar from 'chokidar'
-import readline from 'readline'
 import k from 'kleur'
 import { lookup } from 'mrmime'
 import fs from 'node:fs'
-import { createServer } from 'node:http'
-import { dirname, resolve } from 'node:path'
-import sade from 'sade'
-import { compile } from '../lib/publish.mjs'
-import { getPkgJSON, size, getNetwork } from '../lib/utils.mjs'
 import { access, readFile } from 'node:fs/promises'
+import { createServer } from 'node:http'
+import { dirname, resolve, sep } from 'node:path'
+import { join } from 'path'
+import readline from 'readline'
+import sade from 'sade'
+import glob from 'tiny-glob'
+import { SUPPORTED_EXTENSIONS, compile } from '../lib/publish.mjs'
+import { getNetwork, getPkgJSON, size } from '../lib/utils.mjs'
 
 const box = (...args) => console.log(boxen(...args))
 
+const SUPPORTED_FILES_GLOB = `**/*.{${SUPPORTED_EXTENSIONS.map((d) => d.replace(/^\./, '')).join(',')}}`
 const pad = (msg) => msg.padEnd(4, ' ')
 
 const clearLastLine = () => {
@@ -59,11 +62,23 @@ const program = sade('pub <src> [dest]', true)
                 baseUrl: options['base-url'],
                 jsxImportSource: config.jsxImportSource,
             }
+
             let output = await compile(src, dest, compilerOptions)
             clearLastLine()
             if (!dest) {
+                const supportedFiles = await glob(SUPPORTED_FILES_GLOB, {
+                    filesOnly: true,
+                    cwd: join(process.cwd(), src),
+                    absolute: false,
+                })
+
+                const maxDepthToWatch = supportedFiles.reduce((acc, item) => {
+                    return Math.max(acc, item.split(sep).length)
+                }, 1)
+
                 const watchMap = new Set()
                 const watcher = chokidar.watch(src, {
+                    depth: maxDepthToWatch,
                     ignored: (f) => {
                         return f.startsWith('node_modules')
                     },
@@ -117,7 +132,7 @@ const program = sade('pub <src> [dest]', true)
                 server.listen(options.port, async () => {
                     box(
                         `@tinytown/pub (${k.gray(getPkgJSON().version)})
-    
+
 ${k.green('Serving')}
 
 
