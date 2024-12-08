@@ -1,5 +1,5 @@
 <script>
-    import Button from './components/button.svelte'
+    import Button from './_components/button.svelte'
     let numbers = $state([1, 2, 3, 4])
     let total = $derived(numbers.reduce((t, n) => t + n, 0))
     function addNumber() {
