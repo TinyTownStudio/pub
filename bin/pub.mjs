@@ -2,6 +2,7 @@
 
 import boxen from 'boxen'
 import chokidar from 'chokidar'
+import { WebSocketServer } from '../lib/websocket-server.mjs'
 import k from 'kleur'
 import { lookup } from 'mrmime'
 import fs from 'node:fs'
@@ -14,6 +15,9 @@ import sade from 'sade'
 import glob from 'tiny-glob'
 import { SUPPORTED_EXTENSIONS, compile } from '../lib/publish.mjs'
 import { getNetwork, getPkgJSON, size } from '../lib/utils.mjs'
+import * as ws from 'ws'
+import parse from '@polka/url'
+const { OPEN: WsOpen } = ws.default
 
 const box = (...args) => console.log(boxen(...args))
 
@@ -23,6 +27,91 @@ const pad = (msg) => msg.padEnd(4, ' ')
 const clearLastLine = () => {
     readline.cursorTo(process.stdout, 0, -1)
     readline.clearScreenDown(process.stdout)
+}
+
+class WebSocketServer extends ws.WebSocketServer {
+    constructor(server, mountPath) {
+        super({ noServer: true })
+        this.mountPath = mountPath
+        server.on('upgrade', this._handleUpgrade.bind(this))
+    }
+
+    broadcast(data) {
+        this.clients.forEach((client) => {
+            if (client.readyState !== WsOpen) return
+            client.send(JSON.stringify(data))
+        })
+    }
+
+    _handleUpgrade(req, socket, head) {
+        if (req.headers['sec-websocket-protocol'] !== 'live') {
+            return
+        }
+        const pathname = parse(req).pathname
+        if (pathname == this.mountPath) {
+            this.handleUpgrade(req, socket, head, (client) => {
+                client.emit('connection', client, req)
+                client.on('message', () => {
+                    console.log('from client')
+                })
+            })
+        } else {
+            socket.destroy()
+        }
+    }
+}
+
+const appendWSConnection = (html) => {
+    return html.replace(
+        /<\/body>/,
+        `
+        <script type="module">
+        function log(...args) {
+            console.info('[pub] ', ...args);
+        }
+
+        let ws;
+        function connect() {
+            ws = new WebSocket(location.origin.replace('http', 'ws') + '/live', 'live');
+            function sendSocketMessage(msg) {
+                ws.send(JSON.stringify(msg));
+            }
+        
+            ws.addEventListener('open', () => {
+                log(\`Connected to server.\`);
+            });
+        
+            ws.addEventListener('message', (msg)=>{
+                const parsed = JSON.parse(msg.data)
+                if( parsed.trim() === "reload"){
+                    location.reload()
+                }
+            });
+
+            ws.addEventListener("error", handleError)
+
+            let attempts = 10;
+            function handleError(e) {
+                if (e && e.code === 'ECONNREFUSED') {
+                    let connectInterval = setInterval(()=>{
+                        if(attempts <=0){
+                            clearInterval(connectInterval)
+                            attempts = 10
+                            return 
+                        }
+                        connect()
+                        attempts -=1
+                    }, 1000);
+                }
+                log('connection error', e);
+            }
+        }
+
+        connect()
+        </script>
+        </body>
+    `,
+    )
 }
 
 const readConfig = async (path) => {
@@ -80,19 +169,14 @@ const program = sade('pub <src> [dest]', true)
                 const watcher = chokidar.watch(src, {
                     depth: maxDepthToWatch,
                     ignored: (f) => {
-                        return f.startsWith('node_modules')
+                        return (
+                            f.startsWith('node_modules') ||
+                            f.startsWith('dist') ||
+                            f.startsWith('.tmp')
+                        )
                     },
                 })
                 watcher.add('_pub.json')
-                watcher.on('all', async (c, f) => {
-                    if (c == 'add') {
-                        if (watchMap.has(f)) {
-                            return
-                        }
-                        watchMap.add(f)
-                    }
-                    output = await compile(src, dest, compilerOptions)
-                })
 
                 const server = createServer((req, res) => {
                     const path = req.url
@@ -104,7 +188,9 @@ const program = sade('pub <src> [dest]', true)
 
                     if (path === '/' && output['/index.html']) {
                         res.setHeader('content-type', 'text/html')
-                        return res.end(output['/index.html'].content)
+                        return res.end(
+                            appendWSConnection(output['/index.html'].content),
+                        )
                     }
 
                     if (output[path]) {
@@ -115,7 +201,11 @@ const program = sade('pub <src> [dest]', true)
                             path.replace(/\.html$/, '') + '.html'
                         if (output[normalizedHTML]) {
                             res.setHeader('content-type', 'text/html')
-                            return res.end(output[normalizedHTML].content)
+                            return res.end(
+                                appendWSConnection(
+                                    output[normalizedHTML].content,
+                                ),
+                            )
                         } else {
                             res.statusCode = 404
                             return res.end('404')
@@ -123,9 +213,25 @@ const program = sade('pub <src> [dest]', true)
                     }
                 })
 
+                server.ws = new WebSocketServer(server, '/live')
+
+                watcher.on('all', async (c, f) => {
+                    if (c == 'add') {
+                        if (watchMap.has(f)) {
+                            return
+                        }
+                        watchMap.add(f)
+                    }
+                    output = await compile(src, dest, compilerOptions)
+                    if (c === 'change' && watchMap.has(f)) {
+                        server.ws.broadcast('reload')
+                    }
+                })
+
                 process.on('SIGINT', () => {
                     watcher.close()
                     server.close()
+                    server.ws.close()
                     process.exit()
                 })
 
