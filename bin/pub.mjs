@@ -2,7 +2,6 @@
 
 import boxen from 'boxen'
 import chokidar from 'chokidar'
-import { WebSocketServer } from '../lib/websocket-server.mjs'
 import k from 'kleur'
 import { lookup } from 'mrmime'
 import fs from 'node:fs'
